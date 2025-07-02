@@ -7,6 +7,7 @@ using OMS.Services;
 using OMS.Services.Interfaces;
 using System.Text;
 
+
 var builder = WebApplication.CreateBuilder(args);
 string jwtSecret = string.Empty;
 // Add services to the container.
@@ -27,6 +28,15 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var MyAllowSpecificOrigins = "AllowSpecificOriginsOnly";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:4200");
+                      });
+});
 
 builder.Services.AddAuthentication(options =>
 {
@@ -60,6 +70,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseHttpsRedirection();
 
